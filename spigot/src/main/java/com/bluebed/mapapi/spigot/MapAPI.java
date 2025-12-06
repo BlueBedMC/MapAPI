@@ -20,7 +20,7 @@ import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
 
 @Getter
-public class MapAPI extends AbstractMapAPI {
+public class MapAPI extends AbstractMapAPI<MapAPI> {
     protected ItemFrame[][] itemFrames;
     private Location pos;
     private Direction direction;
@@ -35,12 +35,17 @@ public class MapAPI extends AbstractMapAPI {
         return this;
     }
 
+    @Override
+    protected MapAPI self() {
+        return this;
+    }
+
     public void render(BufferedImage image) {
         render(slice(image));
     }
 
     @Override
-    public MapAPI build(Consumer<AbstractMapAPI> consumer)  {
+    public MapAPI build(Consumer<MapAPI> consumer)  {
         if (direction == null) direction = Direction.NORTH;
         if (pos == null) return null;
         if (pos.getWorld() == null) return null;

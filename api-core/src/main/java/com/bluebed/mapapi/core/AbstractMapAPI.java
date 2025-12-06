@@ -7,40 +7,41 @@ import javax.management.InstanceNotFoundException;
 import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
 
-public abstract class AbstractMapAPI {
+public abstract class AbstractMapAPI<T extends AbstractMapAPI<T>> {
     protected final MapIdHolder mapIdHolder = new MapIdHolder();
 
     @Getter(AccessLevel.PRIVATE)
     protected MapTileSize tileSize = MapTileSize.SMALL;
-    protected int width = MapTileSize.SMALL.getSize(),
-            height = MapTileSize.SMALL.getSize();
+    protected int width = MapTileSize.SMALL.getSize(), height = MapTileSize.SMALL.getSize();
     protected boolean invisible = false;
 
-    public AbstractMapAPI tileSize(MapTileSize size) {
+    public T tileSize(MapTileSize size) {
         this.tileSize = size;
-        return this;
+        return self();
     }
 
-    public AbstractMapAPI mapSize(int width, int height) {
-        this.height = height;
+    public T mapSize(int width, int height) {
         this.width = width;
-        return this;
+        this.height = height;
+        return self();
     }
 
-    public AbstractMapAPI invisible(boolean invisible) {
+    public T invisible(boolean invisible) {
         this.invisible = invisible;
-        return this;
+        return self();
     }
 
-    public AbstractMapAPI build() throws InstanceNotFoundException {
+    public T build() throws InstanceNotFoundException {
         return build(null);
     }
+
+    protected abstract T self();
 
     public void render(BufferedImage image) {
         render(slice(image));
     }
 
-    protected abstract AbstractMapAPI build(Consumer<AbstractMapAPI> consumer) throws InstanceNotFoundException;
+    public abstract T build(Consumer<T> consumer) throws InstanceNotFoundException;
     public abstract void render(BufferedImage[][] tiles);
     protected abstract BufferedImage[][] slice(BufferedImage image);
     public abstract void remove();

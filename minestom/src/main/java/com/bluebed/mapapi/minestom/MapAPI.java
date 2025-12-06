@@ -21,14 +21,15 @@ import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
 
 @Getter
-public class MapAPI extends AbstractMapAPI {
+public class MapAPI extends AbstractMapAPI<MapAPI> {
     protected Entity[][] itemFrames;
     private Instance instance;
     private Pos pos;
     private Direction direction;
 
-    public void instance(Instance instance) {
+    public MapAPI instance(Instance instance) {
         this.instance = instance;
+        return this;
     }
 
     public MapAPI pos(Pos pos) {
@@ -41,12 +42,17 @@ public class MapAPI extends AbstractMapAPI {
         return this;
     }
 
+    @Override
+    protected MapAPI self() {
+        return this;
+    }
+
     public void render(BufferedImage image) {
         render(slice(image));
     }
 
     @Override
-    public MapAPI build(Consumer<AbstractMapAPI> consumer) throws InstanceNotFoundException {
+    public MapAPI build(Consumer<MapAPI> consumer) throws InstanceNotFoundException {
         if (instance == null) throw new InstanceNotFoundException();
         if (direction == null) direction = Direction.NORTH;
         if (pos == null) return null;
@@ -61,7 +67,6 @@ public class MapAPI extends AbstractMapAPI {
         for (int i = 0; i < itemFrames.length; i++) {
             for (int j = 0; j < itemFrames[i].length; j++) {
                 Entity frame = new Entity(EntityType.ITEM_FRAME);
-
                 // make this better eventually
                 switch (direction) {
                     case WEST:

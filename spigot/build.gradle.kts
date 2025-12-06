@@ -1,6 +1,7 @@
 plugins {
     java
     id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("maven-publish")
 }
 
 java {
@@ -51,6 +52,21 @@ tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible) {
         options.release.set(targetJavaVersion)
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+
+            groupId = "com.bluebed.mapapi"
+            artifactId = project.name
+            version = "${project.version}"
+        }
+    }
+    repositories {
+        mavenLocal()
     }
 }
 

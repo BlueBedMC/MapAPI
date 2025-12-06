@@ -46,6 +46,10 @@ publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
+
+            groupId = "com.bluebed.mapapi"
+            artifactId = project.name
+            version = "${project.version}"
         }
     }
     repositories {
