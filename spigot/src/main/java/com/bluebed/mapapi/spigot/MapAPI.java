@@ -70,6 +70,9 @@ public class MapAPI extends AbstractMapAPI<MapAPI> {
                 frame.setFacingDirection(convertDirection(direction), true);
                 frame.setVisible(!invisible);
 
+                // if you don't it will break
+                MapAPISpigot.addItemFrame(frame);
+
                 itemFrames[i][j] = frame;
             }
         }
@@ -109,6 +112,24 @@ public class MapAPI extends AbstractMapAPI<MapAPI> {
         }
     }
 
+    public void renderAndRelease(BufferedImage image) {
+        BufferedImage[][] tiles = slice(image);
+
+        render(tiles);
+
+        for (int y = 0; y < tiles.length; y++) {
+            for (int x = 0; x < tiles[y].length; x++) {
+                tiles[y][x] = null;
+            }
+        }
+
+        tiles = null;
+        image = null;
+
+        System.gc();
+    }
+
+
     protected BufferedImage[][] slice(BufferedImage image) {
         int size = tileSize.getSize();
 
@@ -132,7 +153,10 @@ public class MapAPI extends AbstractMapAPI<MapAPI> {
     @Override
     public void remove() {
         for (ItemFrame[] rows : itemFrames) {
-            for (ItemFrame frame : rows) frame.remove();
+            for (ItemFrame frame : rows) {
+                MapAPISpigot.removeItemFrame(frame);
+                frame.remove();
+            }
         }
     }
 
