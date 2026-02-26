@@ -15,7 +15,6 @@ import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
 
@@ -69,13 +68,15 @@ public class MapAPI extends AbstractMapAPI<MapAPI> {
 
                 frame.setFacingDirection(convertDirection(direction), true);
                 frame.setVisible(!invisible);
-
-                // if you don't it will break
-                MapAPISpigot.addItemFrame(frame);
+                frame.setInvulnerable(true);
+                frame.setItemDropChance(0);
 
                 itemFrames[i][j] = frame;
             }
         }
+
+        // do this
+        MapAPISpigot.addMapInstance(this);
 
         if (consumer != null)
             consumer.accept(this);
@@ -154,10 +155,10 @@ public class MapAPI extends AbstractMapAPI<MapAPI> {
     public void remove() {
         for (ItemFrame[] rows : itemFrames) {
             for (ItemFrame frame : rows) {
-                MapAPISpigot.removeItemFrame(frame);
                 frame.remove();
             }
         }
+        MapAPISpigot.removeMapInstance(this);
     }
 
     protected BlockFace convertDirection(Direction direction) {
@@ -168,6 +169,15 @@ public class MapAPI extends AbstractMapAPI<MapAPI> {
             case WEST -> BlockFace.WEST;
             default -> BlockFace.NORTH;
         };
+    }
+
+    public boolean hasEntityId(int id) {
+        for (ItemFrame[] rows : itemFrames) {
+            for (ItemFrame frame : rows) {
+                if (frame.getEntityId() == id) return true;
+            }
+        }
+        return false;
     }
 
 }

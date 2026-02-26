@@ -4,14 +4,14 @@ plugins {
     id("maven-publish")
 }
 
-val minestomVersion = "2025.10.31-1.21.10"
+val minestomVersion = "2025.10.05-1.21.8"
 
 group = "com.bluebed.mapapi"
 version = "1.0-$minestomVersion"
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(25))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
